@@ -1,6 +1,25 @@
 # This file contains recursive sources that require this package
+LVM2-dev
+buildreq-gnome
+cheese-dev
 clr-init
+clutter-dev
+clutter-gst-dev
+clutter-gtk-dev
 earlyoom
+efl-dev
+enlightenment-dev
+evolution-dev
+gdm-dev
+gnome-desktop-dev
+libchamplain-dev
+libgudev-dev
 libvirt
 linux-oracle
 sysstat
+systemd-dev
+systemd-dev32
+v4l-utils-dev
+v4l-utils-dev32
+waffle-dev
+wlroots-dev

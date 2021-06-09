@@ -6,8 +6,13 @@ bash-completion-dev
 cmake
 cryptsetup-dev
 curl-dev
+dbus
+dbus-broker
 dbus-dev
 dbus-dev32
+dbus-glib
+dbus-glib-dev
+dbus-python
 docbook-xml
 elfutils-dev
 gcc-dev32
@@ -48,6 +53,7 @@ Linux-PAM-dev32
 lxml
 ninja
 openssl-dev
+openssl-staticdev
 pkg-config-dev
 polkit-dev
 python3
@@ -55,8 +61,13 @@ readline-dev
 shadow
 tpm2-tss
 tpm2-tss-dev
+tzdata
 util-linux-dev
 util-linux-dev32
 util-linux-extras
 xz-dev
+xz-dev32
+xz-staticdev
+zlib-dev
 zlib-dev32
+zlib-staticdev
