@@ -1,4 +1,14 @@
 # This file contains additional pkgconfig build requirements that did
 # not get picked up automatically. One name per line, no whitespace.
-zlib
+32liblz4
+32libzstd
 32p11-kit-1
+32xkbcommon
+audit
+bash-completion
+liblz4
+libzstd
+polkit-gobject-1
+pwquality
+xkbcommon
+zlib
