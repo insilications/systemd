@@ -1,0 +1,43 @@
+From e6d8fc23f19c1777f9aaf3036124e8c5a2f134b5 Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 10:59:21 -0300
+Subject: [PATCH 44/45] Fix hostname-setup.c
+
+---
+ src/shared/hostname-setup.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/shared/hostname-setup.c b/src/shared/hostname-setup.c
+index 1501da1..42ea986 100644
+--- a/src/shared/hostname-setup.c
++++ b/src/shared/hostname-setup.c
+@@ -3,6 +3,9 @@
+ #include <errno.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <limits.h>
++#include <unistd.h>
++#include <string.h>
+ #include <sys/utsname.h>
+ #include <unistd.h>
+ 
+@@ -19,6 +22,7 @@
+ #include "string-util.h"
+ #include "util.h"
+ 
++
+ static int sethostname_idempotent_full(const char *s, bool really) {
+         char buf[HOST_NAME_MAX + 1] = {};
+ 
+@@ -232,7 +236,7 @@ int hostname_setup(bool really) {
+ 
+ int set_first_hostname(void)
+ {
+-        char h[HOST_NAME_MAX1];
++        char h[HOST_NAME_MAX + 1];
+         h[HOST_NAME_MAX] = '\0';
+         _cleanup_free_ char *n_host = NULL;
+         _cleanup_free_ char *mid = NULL;
+-- 
+2.31.1
+

@@ -1,0 +1,25 @@
+From e837e503c11098425520950c6930589e7095ff12 Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 10:20:22 -0300
+Subject: [PATCH 21/45] Enable BBR - Bottleneck Bandwidth and RTT
+
+---
+ sysctl.d/50-default.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sysctl.d/50-default.conf b/sysctl.d/50-default.conf
+index f41e24b..ef90e9a 100644
+--- a/sysctl.d/50-default.conf
++++ b/sysctl.d/50-default.conf
+@@ -45,7 +45,7 @@ net.ipv4.conf.*.promote_secondaries = 1
+ -net.ipv4.ping_group_range = 0 2147483647
+ 
+ # Fair Queue CoDel packet scheduler to fight bufferbloat
+--net.core.default_qdisc = fq_codel
++net.core.default_qdisc = fq
+ 
+ # Enable hard and soft link protection
+ fs.protected_hardlinks = 1
+-- 
+2.31.1
+

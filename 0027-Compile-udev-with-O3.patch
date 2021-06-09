@@ -1,0 +1,24 @@
+From 7800c2a0a3e0a19e9604c33080564a4228c2f148 Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 10:36:58 -0300
+Subject: [PATCH 27/45] Compile udev with -O3
+
+---
+ meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meson.build b/meson.build
+index 350163c..6be96d6 100644
+--- a/meson.build
++++ b/meson.build
+@@ -3172,6 +3172,7 @@ public_programs += executable(
+ public_programs += executable(
+         'udevadm',
+         udevadm_sources,
++        c_args : ['-O3'],
+         include_directories : includes,
+         link_with : [libudevd_core],
+         dependencies : [versiondep,
+-- 
+2.31.1
+

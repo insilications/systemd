@@ -1,0 +1,25 @@
+From 4cfeaf876d101966a1ac785b93a93214c0ccf31f Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 09:35:23 -0300
+Subject: [PATCH 01/45] journal: raise compression threshold.
+
+---
+ src/libsystemd/sd-journal/journal-file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/libsystemd/sd-journal/journal-file.c b/src/libsystemd/sd-journal/journal-file.c
+index f8bb708..3ceefb8 100644
+--- a/src/libsystemd/sd-journal/journal-file.c
++++ b/src/libsystemd/sd-journal/journal-file.c
+@@ -37,7 +37,7 @@
+ #define DEFAULT_DATA_HASH_TABLE_SIZE (2047ULL*sizeof(HashItem))
+ #define DEFAULT_FIELD_HASH_TABLE_SIZE (333ULL*sizeof(HashItem))
+ 
+-#define DEFAULT_COMPRESS_THRESHOLD (512ULL)
++#define DEFAULT_COMPRESS_THRESHOLD (8192ULL)
+ #define MIN_COMPRESS_THRESHOLD (8ULL)
+ 
+ /* This is the minimum journal file size */
+-- 
+2.31.1
+

@@ -1,0 +1,29 @@
+From 07ec2040f3c9ecc5b4342525d08831f323deb7a3 Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 10:45:32 -0300
+Subject: [PATCH 40/45] Exempt gdm and a few others from default to locked
+ account.
+
+---
+ src/sysusers/sysusers.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/sysusers/sysusers.c b/src/sysusers/sysusers.c
+index b098eb2..94298a9 100644
+--- a/src/sysusers/sysusers.c
++++ b/src/sysusers/sysusers.c
+@@ -542,6 +542,11 @@ static int write_temporary_shadow(const char *shadow_path, FILE **tmpfile, char
+                         .sp_flag = ULONG_MAX, /* this appears to be what everybody does ... */
+                 };
+ 
++                /* exempt gdm, sddm, lightdm from locking by default */
++                /* https://github.com/systemd/systemd/issues/13522 */
++                if ((i->uid == 311) || (i->uid == 336) || (i->uid == 308))
++                        n.sp_expire = -1;
++
+                 r = putspent_sane(&n, shadow);
+                 if (r < 0)
+                         return r;
+-- 
+2.31.1
+

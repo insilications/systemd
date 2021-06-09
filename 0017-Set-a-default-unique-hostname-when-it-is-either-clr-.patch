@@ -1,0 +1,85 @@
+From 8e1008f33d505d48ea3877a76a1197f94b964a9e Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 10:17:32 -0300
+Subject: [PATCH 17/45] Set a default, unique, hostname, when it is either
+ 'clr' or 'localhost'
+
+---
+ src/core/main.c             |  1 +
+ src/shared/hostname-setup.c | 37 +++++++++++++++++++++++++++++++++++++
+ src/shared/hostname-setup.h |  2 ++
+ 3 files changed, 40 insertions(+)
+
+diff --git a/src/core/main.c b/src/core/main.c
+index 0ddd629..de55b51 100644
+--- a/src/core/main.c
++++ b/src/core/main.c
+@@ -2086,6 +2086,7 @@ static int initialize_runtime(
+                         (void) hostname_setup(true);
+                         /* Force transient machine-id on first boot. */
+                         machine_id_setup(NULL, first_boot, arg_machine_id, NULL);
++                        set_first_hostname();
+                         (void) loopback_setup();
+                         bump_unix_max_dgram_qlen();
+                         bump_file_max_and_nr_open();
+diff --git a/src/shared/hostname-setup.c b/src/shared/hostname-setup.c
+index 511aa7d..1501da1 100644
+--- a/src/shared/hostname-setup.c
++++ b/src/shared/hostname-setup.c
+@@ -230,6 +230,43 @@ int hostname_setup(bool really) {
+         return r;
+ }
+ 
++int set_first_hostname(void)
++{
++        char h[HOST_NAME_MAX1];
++        h[HOST_NAME_MAX] = '\0';
++        _cleanup_free_ char *n_host = NULL;
++        _cleanup_free_ char *mid = NULL;
++
++        if (access("/etc/hostname", F_OK) == 0) {
++                return 1;
++        }
++
++        if (gethostname(h, HOST_NAME_MAX) != 0) {
++                return 0;
++        }
++
++        if (!streq(h, "clr") && !streq(h, "localhost")) {
++                return 0;
++        }
++
++        if (read_etc_hostname("/etc/machine-id", &mid) != 0) {
++                /* First boot, use transient machine-id until synced */
++                if (read_etc_hostname("/run/machine-id", &mid) != 0) {
++                        return 0;
++                }
++        }
++
++        if (!asprintf(&n_host, "clr-%s", mid)) {
++                return 0;
++        }
++
++        if (sethostname_idempotent(n_host) != 0) {
++                return 1;
++        }
++
++        return 0;
++}
++
+ static const char* const hostname_source_table[] = {
+         [HOSTNAME_STATIC]    = "static",
+         [HOSTNAME_TRANSIENT] = "transient",
+diff --git a/src/shared/hostname-setup.h b/src/shared/hostname-setup.h
+index 5ac7241..2ac90b1 100644
+--- a/src/shared/hostname-setup.h
++++ b/src/shared/hostname-setup.h
+@@ -24,3 +24,5 @@ int read_etc_hostname(const char *path, char **ret);
+ bool get_hostname_filtered(char ret[static HOST_NAME_MAX + 1]);
+ void hostname_update_source_hint(const char *hostname, HostnameSource source);
+ int hostname_setup(bool really);
++
++int set_first_hostname(void);
+-- 
+2.31.1
+

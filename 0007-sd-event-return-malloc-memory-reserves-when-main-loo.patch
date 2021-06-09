@@ -1,0 +1,45 @@
+From aa1da67254b294300f872eecfb0cb8122d828541 Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 09:55:58 -0300
+Subject: [PATCH 07/45] sd-event: return malloc() memory reserves when main
+ loop is idle.
+
+---
+ src/libsystemd/sd-event/sd-event.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/src/libsystemd/sd-event/sd-event.c b/src/libsystemd/sd-event/sd-event.c
+index b76b062..78b8ae4 100644
+--- a/src/libsystemd/sd-event/sd-event.c
++++ b/src/libsystemd/sd-event/sd-event.c
+@@ -3,6 +3,7 @@
+ #include <sys/epoll.h>
+ #include <sys/timerfd.h>
+ #include <sys/wait.h>
++#include <malloc.h>
+ 
+ #include "sd-daemon.h"
+ #include "sd-event.h"
+@@ -4126,9 +4127,17 @@ _public_ int sd_event_run(sd_event *e, uint64_t timeout) {
+         _unused_ _cleanup_(sd_event_unrefp) sd_event *ref = sd_event_ref(e);
+ 
+         r = sd_event_prepare(e);
+-        if (r == 0)
+-                /* There was nothing? Then wait... */
++        if (r == 0) {
++                /* There was nothing? Then wait...
++                 *
++                 * ... but since there is no event pending, likely
++                 * we'll be idle for a long time.  This is a good time
++                 * to return any malloc() memory reserves to the
++                 * operating system.
++                 */
++                malloc_trim(0);
+                 r = sd_event_wait(e, timeout);
++        }
+ 
+         if (e->profile_delays)
+                 e->last_run_usec = now(CLOCK_MONOTONIC);
+-- 
+2.31.1
+

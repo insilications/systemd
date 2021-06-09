@@ -1,0 +1,39 @@
+From b8b5257cc25b534c4d458333a84bd8d42a2f6d9d Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 10:40:33 -0300
+Subject: [PATCH 34/45] Do not enable audit by default in the journal.
+
+---
+ man/journald.conf.xml         | 2 +-
+ src/journal/journald-server.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/man/journald.conf.xml b/man/journald.conf.xml
+index f061c45..8b433bf 100644
+--- a/man/journald.conf.xml
++++ b/man/journald.conf.xml
+@@ -421,7 +421,7 @@
+         <command>systemd-journald</command> collects generated audit records, it just controls whether it
+         tells the kernel to generate them. This means if another tool turns on auditing even if
+         <command>systemd-journald</command> left it off, it will still collect the generated
+-        messages. Defaults to on.</para></listitem>
++        messages. Defaults to off.</para></listitem>
+       </varlistentry>
+ 
+       <varlistentry>
+diff --git a/src/journal/journald-server.c b/src/journal/journald-server.c
+index a621824..3708d21 100644
+--- a/src/journal/journald-server.c
++++ b/src/journal/journald-server.c
+@@ -2190,7 +2190,7 @@ int server_init(Server *s, const char *namespace) {
+                 .compress.threshold_bytes = UINT64_MAX,
+                 .seal = true,
+ 
+-                .set_audit = true,
++                .set_audit = false,
+ 
+                 .watchdog_usec = USEC_INFINITY,
+ 
+-- 
+2.31.1
+

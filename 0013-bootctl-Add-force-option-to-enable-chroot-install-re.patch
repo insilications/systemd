@@ -1,0 +1,72 @@
+From 460a1a18b50046a69220cf262185e935dc7755da Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 10:02:52 -0300
+Subject: [PATCH 13/45] bootctl: Add --force option to enable chroot
+ install/remove of sd-boot
+
+---
+ src/boot/bootctl.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/src/boot/bootctl.c b/src/boot/bootctl.c
+index 04cc766..ecfcbf1 100644
+--- a/src/boot/bootctl.c
++++ b/src/boot/bootctl.c
+@@ -61,6 +61,8 @@ static const char *arg_dollar_boot_path(void) {
+         return arg_xbootldr_path ?: arg_esp_path;
+ }
+ 
++static bool arg_force = false;
++
+ static int acquire_esp(
+                 bool unprivileged_mode,
+                 uint32_t *ret_part,
+@@ -1058,6 +1060,8 @@ static int parse_argv(int argc, char *argv[]) {
+         enum {
+                 ARG_ESP_PATH = 0x100,
+                 ARG_BOOT_PATH,
++                ARG_PRINT_BOOT_PATH,
++                ARG_FORCE,
+                 ARG_VERSION,
+                 ARG_NO_VARIABLES,
+                 ARG_NO_PAGER,
+@@ -1067,6 +1071,7 @@ static int parse_argv(int argc, char *argv[]) {
+         static const struct option options[] = {
+                 { "help",            no_argument,       NULL, 'h'                 },
+                 { "version",         no_argument,       NULL, ARG_VERSION         },
++                { "force",           no_argument,       NULL, ARG_FORCE           },
+                 { "esp-path",        required_argument, NULL, ARG_ESP_PATH        },
+                 { "path",            required_argument, NULL, ARG_ESP_PATH        }, /* Compatibility alias */
+                 { "boot-path",       required_argument, NULL, ARG_BOOT_PATH       },
+@@ -1120,6 +1125,10 @@ static int parse_argv(int argc, char *argv[]) {
+                         arg_print_dollar_boot_path = true;
+                         break;
+ 
++                case ARG_FORCE:
++                        arg_force = true;
++                        break;
++
+                 case ARG_NO_VARIABLES:
+                         arg_touch_variables = false;
+                         break;
+@@ -1563,7 +1572,7 @@ static int verb_install(int argc, char *argv[], void *userdata) {
+ 
+         (void) sync_everything();
+ 
+-        if (arg_touch_variables)
++        if (arg_touch_variables && !arg_force)
+                 r = install_variables(arg_esp_path,
+                                       part, pstart, psize, uuid,
+                                       "/EFI/systemd/systemd-boot" EFI_MACHINE_TYPE_NAME ".efi",
+@@ -1611,7 +1620,7 @@ static int verb_remove(int argc, char *argv[], void *userdata) {
+ 
+         (void) sync_everything();
+ 
+-        if (!arg_touch_variables)
++        if (!arg_touch_variables || arg_force)
+                 return r;
+ 
+         q = remove_variables(uuid, "/EFI/systemd/systemd-boot" EFI_MACHINE_TYPE_NAME ".efi", true);
+-- 
+2.31.1
+

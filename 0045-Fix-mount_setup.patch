@@ -1,0 +1,24 @@
+From d3da4dad18b1ee92a8ac5c7e75b402b5cf04207e Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Wed, 9 Jun 2021 11:05:29 -0300
+Subject: [PATCH 45/45] Fix mount_setup
+
+---
+ src/shared/mount-setup.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/shared/mount-setup.c b/src/shared/mount-setup.c
+index c0dd5e3..083dcc1 100644
+--- a/src/shared/mount-setup.c
++++ b/src/shared/mount-setup.c
+@@ -497,6 +497,7 @@ static int relabel_extra(void) {
+ 
+ int mount_setup(bool loaded_policy, bool leave_propagation) {
+         int r;
++        struct stat sb;
+ 
+         r = mount_points_setup(ELEMENTSOF(mount_table), loaded_policy);
+         if (r < 0)
+-- 
+2.31.1
+
